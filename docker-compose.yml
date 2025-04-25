@@ -1,0 +1,7 @@
+services:
+  transaction_parser_api:
+    build: .
+    container_name: transaction_parser_api
+    restart: always
+    ports:
+      - "3000:3000"
