@@ -24,6 +24,30 @@ func TestRepository_NewMemoryStorage(t *testing.T) {
 	}
 }
 
+func TestRepository_GetLastParsedBlock(t *testing.T) {
+	repo := repository.NewMemoryStorage()
+
+	err := repo.AddAddress(evmtest.EVMZeroValueAddress)
+	if err != nil {
+		t.Fatalf("AddAddress(%q): unexpected error: %v", evmtest.EVMZeroValueAddress, err)
+	}
+
+	tx := parser.Transaction{
+		Hash:        "h1",
+		From:        evmtest.EVMZeroValueAddress,
+		To:          "0xabc",
+		Value:       "10",
+		BlockNumber: "0x1",
+	}
+
+	repo.SaveTransaction(evmtest.EVMZeroValueAddress, tx)
+
+	got := repo.GetLastParsedBlock()
+	if got != tx.BlockNumber {
+		t.Errorf("GetLastParsedBlock(): expected %s, got %s", tx.BlockNumber, got)
+	}
+}
+
 func TestRepository_AddAddress(t *testing.T) {
 	t.Run("happy path", func(t *testing.T) {
 		repo := repository.NewMemoryStorage()

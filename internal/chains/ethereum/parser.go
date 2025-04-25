@@ -6,7 +6,6 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/jeronimobarea/transaction_parser/internal/chains/ethereum/client"
 	"github.com/jeronimobarea/transaction_parser/internal/parser"
 	"github.com/jeronimobarea/transaction_parser/internal/pkg/evm"
 	"github.com/jeronimobarea/transaction_parser/internal/pkg/svcerrors"
@@ -18,26 +17,19 @@ var (
 )
 
 type ethereumParser struct {
-	client client.Client
 	repo   Repository
 	logger *log.Logger
 }
 
-func NewEthereumParser(client client.Client, repo Repository, logger *log.Logger) parser.Parser {
+func NewEthereumParser(repo Repository, logger *log.Logger) parser.Parser {
 	return &ethereumParser{
-		client: client,
 		repo:   repo,
 		logger: logger,
 	}
 }
 
-func (p *ethereumParser) GetCurrentBlock(ctx context.Context) (int64, error) {
-	hexValue, err := p.client.GetCurrentBlock(ctx)
-	if err != nil {
-		p.logger.Printf("error making call go get current block: %v\n", err)
-		return -1, err
-	}
-
+func (p *ethereumParser) GetCurrentBlock(_ context.Context) (int64, error) {
+	hexValue := p.repo.GetLastParsedBlock()
 	return hexToDecimal(hexValue)
 }
 

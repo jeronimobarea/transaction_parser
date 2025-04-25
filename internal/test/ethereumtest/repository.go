@@ -6,9 +6,14 @@ import (
 )
 
 type FakeRepo struct {
-	GetTransactionsResp []parser.Transaction
-	HasAddressResp      bool
-	AddAddressErr       error
+	GetLastParsedBlockResp string
+	GetTransactionsResp    []parser.Transaction
+	HasAddressResp         bool
+	AddAddressErr          error
+}
+
+func (r FakeRepo) GetLastParsedBlock() string {
+	return r.GetLastParsedBlockResp
 }
 
 func (r FakeRepo) GetTransactions(_ evm.Address) []parser.Transaction {

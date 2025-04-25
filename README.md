@@ -59,6 +59,8 @@ All endpoints respond with `Content-Type: application/json`.
 
 ### 1. Get Current Block
 
+By default it will be 0 and will only be updated once we start processing transactions for subscribed addresses.
+
 ```curl
 curl --location 'http://localhost:3000/blocks/current'
 ```

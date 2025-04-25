@@ -9,7 +9,6 @@ import (
 
 	"github.com/jeronimobarea/transaction_parser/internal/parser"
 	"github.com/jeronimobarea/transaction_parser/internal/pkg/evm"
-	"github.com/jeronimobarea/transaction_parser/internal/test"
 	"github.com/jeronimobarea/transaction_parser/internal/test/ethereumtest"
 	"github.com/jeronimobarea/transaction_parser/internal/test/evmtest"
 )
@@ -73,40 +72,41 @@ func TestHexToDecimal(t *testing.T) {
 	}
 }
 
-func TestService_GetCurrentBlock(t *testing.T) {
+func TestParser_GetCurrentBlock(t *testing.T) {
 	var (
 		ctx = context.Background()
 
 		logger = log.Default()
-		repo   = &ethereumtest.FakeRepo{}
 	)
 
 	t.Run("happy path", func(t *testing.T) {
 		var (
-			fc = &ethereumtest.FakeClient{
-				GetCurrentBlockResp: "0x1a",
+			repo = &ethereumtest.FakeRepo{
+				GetLastParsedBlockResp: "0x1",
 			}
-
-			p = NewEthereumParser(fc, repo, logger)
+			p = NewEthereumParser(repo, logger)
 		)
 
 		got, err := p.GetCurrentBlock(ctx)
 		if err != nil {
 			t.Fatalf("GetCurrentBlock: unexpected error: %v", err)
 		}
-		if want := int64(0x1a); got != want {
+
+		want := int64(1)
+		if got != want {
 			t.Errorf("GetCurrentBlock: want %d, got %d", want, got)
 		}
 	})
 
-	t.Run("block error", func(t *testing.T) {
+	t.Run("error parsing latest block number", func(t *testing.T) {
 		var (
 			ctx = context.Background()
 
-			fc = &ethereumtest.FakeClient{
-				GetCurrentBlockErr: test.DummyErr,
+			repo = &ethereumtest.FakeRepo{
+				GetLastParsedBlockResp: "invalid",
 			}
-			p = NewEthereumParser(fc, repo, logger)
+
+			p = NewEthereumParser(repo, logger)
 		)
 
 		got, err := p.GetCurrentBlock(ctx)
@@ -131,13 +131,12 @@ func TestParser_GetTransactions(t *testing.T) {
 				{Hash: "h2", From: "0x0000000000000000000000000000000000000001", To: evmtest.EVMZeroValueAddress, Value: "20", BlockNumber: "0x2"},
 			}
 
-			fc   = &ethereumtest.FakeClient{}
 			repo = &ethereumtest.FakeRepo{
 				GetTransactionsResp: want,
 				HasAddressResp:      true,
 			}
 
-			p = NewEthereumParser(fc, repo, logger)
+			p = NewEthereumParser(repo, logger)
 		)
 
 		got, err := p.GetTransactions(ctx, evmtest.EVMZeroValueAddress)
@@ -156,7 +155,7 @@ func TestParser_GetTransactions(t *testing.T) {
 
 			repo = &ethereumtest.FakeRepo{}
 
-			p = NewEthereumParser(&ethereumtest.FakeClient{}, repo, logger)
+			p = NewEthereumParser(repo, logger)
 		)
 
 		_, err := p.GetTransactions(ctx, evm.Address("not-an-address"))

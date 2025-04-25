@@ -26,7 +26,7 @@ func Run(ctx context.Context) {
 		ethClient := ethereumClient.NewClient(ethereumNodePRCUrl, logger)
 		ethereumRepo := ethereumRepository.NewMemoryStorage()
 
-		ethereumParser = ethereum.NewEthereumParser(ethClient, ethereumRepo, logger)
+		ethereumParser = ethereum.NewEthereumParser(ethereumRepo, logger)
 
 		poller := pollers.NewPoller(ethClient, ethereumRepo, logger)
 

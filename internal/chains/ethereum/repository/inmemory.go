@@ -9,16 +9,25 @@ import (
 )
 
 type repository struct {
-	mu        sync.RWMutex
-	addresses map[evm.Address]struct{}
-	txs       map[evm.Address][]parser.Transaction
+	mu              sync.RWMutex
+	addresses       map[evm.Address]struct{}
+	txs             map[evm.Address][]parser.Transaction
+	lastParsedBlock string
 }
 
 func NewMemoryStorage() ethereum.Repository {
 	return &repository{
-		addresses: make(map[evm.Address]struct{}),
-		txs:       make(map[evm.Address][]parser.Transaction),
+		addresses:       make(map[evm.Address]struct{}),
+		txs:             make(map[evm.Address][]parser.Transaction),
+		lastParsedBlock: "0x0",
 	}
+}
+
+func (r *repository) GetLastParsedBlock() string {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	return r.lastParsedBlock
 }
 
 func (r *repository) AddAddress(address evm.Address) error {
@@ -52,6 +61,7 @@ func (r *repository) SaveTransaction(address evm.Address, tx parser.Transaction)
 		}
 	}
 
+	r.lastParsedBlock = tx.BlockNumber
 	r.txs[address] = append(txs, tx)
 }
 

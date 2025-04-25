@@ -6,6 +6,7 @@ import (
 )
 
 type Repository interface {
+	GetLastParsedBlock() string
 	AddAddress(address evm.Address) error
 	HasAddress(address evm.Address) bool
 	SaveTransaction(address evm.Address, tx parser.Transaction)

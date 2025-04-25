@@ -13,8 +13,7 @@ import (
 const (
 	JSONRPCVersion = "2.0"
 
-	EthBlockNumberMethod = "eth_blockNumber"
-	EthGetBlockByNumber  = "eth_getBlockByNumber"
+	EthGetBlockByNumber = "eth_getBlockByNumber"
 
 	ReturnFullTransactionObjects = true
 	LatestBlock                  = "latest"
@@ -22,7 +21,6 @@ const (
 
 type Client interface {
 	GetBlock(ctx context.Context, blockID string) ([]TransactionResponse, error)
-	GetCurrentBlock(ctx context.Context) (string, error)
 }
 
 type client struct {
@@ -58,22 +56,6 @@ func (c *client) GetBlock(ctx context.Context, blockID string) ([]TransactionRes
 		return nil, err
 	}
 	return block.Transactions, nil
-}
-
-func (c *client) GetCurrentBlock(ctx context.Context) (string, error) {
-	resp, err := c.doRPCRequest(ctx, EthBlockNumberMethod)
-	if err != nil {
-		c.logger.Printf("error making get current block request: %v\n", err)
-		return "", err
-	}
-
-	var blockNumber string
-	err = json.Unmarshal([]byte(resp), &blockNumber)
-	if err != nil {
-		c.logger.Printf("error unmarshalling response block number: %v\n", err)
-		return "", err
-	}
-	return blockNumber, nil
 }
 
 func (c *client) doRPCRequest(ctx context.Context, method string, params ...interface{}) (json.RawMessage, error) {

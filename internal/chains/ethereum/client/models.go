@@ -34,6 +34,4 @@ type (
 		Value       string `json:"value"`
 		BlockNumber string `json:"blockNumber"`
 	}
-
-	subscriptionResponse struct{}
 )
