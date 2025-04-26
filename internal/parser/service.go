@@ -5,8 +5,6 @@ import (
 	"errors"
 	"log"
 	"sync"
-
-	"github.com/jeronimobarea/transaction_parser/internal/pkg/evm"
 )
 
 const EthereumChainID = 1
@@ -65,11 +63,7 @@ func (svc *service) GetCurrentBlock(ctx context.Context) (int64, error) {
 	return parser.GetCurrentBlock(ctx)
 }
 
-func (svc *service) GetTransactions(ctx context.Context, address evm.Address) ([]Transaction, error) {
-	if err := address.Validate(); err != nil {
-		return nil, err
-	}
-
+func (svc *service) GetTransactions(ctx context.Context, address string) ([]Transaction, error) {
 	parser, err := svc.getParser(EthereumChainID)
 	if err != nil {
 		return nil, err
@@ -78,11 +72,7 @@ func (svc *service) GetTransactions(ctx context.Context, address evm.Address) ([
 	return parser.GetTransactions(ctx, address)
 }
 
-func (svc *service) Subscribe(ctx context.Context, address evm.Address) error {
-	if err := address.Validate(); err != nil {
-		return err
-	}
-
+func (svc *service) Subscribe(ctx context.Context, address string) error {
 	parser, err := svc.getParser(EthereumChainID)
 	if err != nil {
 		return err

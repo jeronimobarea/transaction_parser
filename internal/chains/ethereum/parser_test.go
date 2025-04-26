@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/jeronimobarea/transaction_parser/internal/parser"
-	"github.com/jeronimobarea/transaction_parser/internal/pkg/evm"
 	"github.com/jeronimobarea/transaction_parser/internal/test/ethereumtest"
 	"github.com/jeronimobarea/transaction_parser/internal/test/evmtest"
 )
@@ -139,7 +138,7 @@ func TestParser_GetTransactions(t *testing.T) {
 			p = NewEthereumParser(repo, logger)
 		)
 
-		got, err := p.GetTransactions(ctx, evmtest.EVMZeroValueAddress)
+		got, err := p.GetTransactions(ctx, evmtest.EVMZeroValueAddress.String())
 		if err != nil {
 			t.Fatalf("GetTransactions: unexpected error: %v", err)
 		}
@@ -158,7 +157,7 @@ func TestParser_GetTransactions(t *testing.T) {
 			p = NewEthereumParser(repo, logger)
 		)
 
-		_, err := p.GetTransactions(ctx, evm.Address("not-an-address"))
+		_, err := p.GetTransactions(ctx, "not-an-address")
 		if err == nil {
 			t.Fatal("GetTransactions with invalid address: expected error, got none")
 		}

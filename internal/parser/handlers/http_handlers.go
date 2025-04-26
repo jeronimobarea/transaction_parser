@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"net/http"
-
-	"github.com/jeronimobarea/transaction_parser/internal/pkg/evm"
 )
 
 const AddressQueryKey = "address"
@@ -22,7 +20,7 @@ func (h Handler) getCurrentBlock(w http.ResponseWriter, r *http.Request) {
 func (h Handler) subscribeAddress(w http.ResponseWriter, r *http.Request) {
 	address := r.URL.Query().Get(AddressQueryKey)
 
-	err := h.parserSvc.Subscribe(r.Context(), evm.Address(address))
+	err := h.parserSvc.Subscribe(r.Context(), address)
 	if err != nil {
 		h.logger.Printf("error subscribing address: %s: %v", address, err)
 
@@ -36,7 +34,7 @@ func (h Handler) subscribeAddress(w http.ResponseWriter, r *http.Request) {
 func (h Handler) getTransactions(w http.ResponseWriter, r *http.Request) {
 	address := r.URL.Query().Get(AddressQueryKey)
 
-	txs, err := h.parserSvc.GetTransactions(r.Context(), evm.Address(address))
+	txs, err := h.parserSvc.GetTransactions(r.Context(), address)
 	if err != nil {
 		h.logger.Printf("error retrieving transactions for address: %s: %v", address, err)
 

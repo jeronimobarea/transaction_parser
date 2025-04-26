@@ -51,8 +51,10 @@ func Run(ctx context.Context) {
 	var router *httpx.Router
 	{
 		router = httpx.NewRouter()
+
+		//** Register routes **//
+		parserHandlers.RegisterRoutes(router, parserSvc, logger)
 	}
-	parserHandlers.RegisterRoutes(router, parserSvc, logger)
 
 	httpServerPort := osx.GetEnvFallback("HTTP_SERVER_PORT", ":3000")
 	logger.Printf("Server listening on: %s \n", httpServerPort)

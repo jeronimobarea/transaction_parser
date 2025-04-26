@@ -48,27 +48,29 @@ func hexToDecimal(hexValue string) (int64, error) {
 	return value, nil
 }
 
-func (p *ethereumParser) GetTransactions(ctx context.Context, address evm.Address) ([]parser.Transaction, error) {
-	if err := address.Validate(); err != nil {
+func (p *ethereumParser) GetTransactions(ctx context.Context, address string) ([]parser.Transaction, error) {
+	addr := evm.Address(address)
+	if err := addr.Validate(); err != nil {
 		p.logger.Printf("error validating address: %v\n", err)
 		return nil, err
 	}
 
-	if !p.repo.HasAddress(address) {
+	if !p.repo.HasAddress(addr) {
 		return nil, ErrAddressNotSubscribed
 	}
-	return p.repo.GetTransactions(address), nil
+	return p.repo.GetTransactions(addr), nil
 }
 
-func (p *ethereumParser) Subscribe(_ context.Context, address evm.Address) error {
-	if err := address.Validate(); err != nil {
+func (p *ethereumParser) Subscribe(_ context.Context, address string) error {
+	addr := evm.Address(address)
+	if err := addr.Validate(); err != nil {
 		p.logger.Printf("error validating address: %v\n", err)
 		return err
 	}
 
-	if p.repo.HasAddress(address) {
+	if p.repo.HasAddress(addr) {
 		return ErrAddressConflict
 	}
 
-	return p.repo.AddAddress(address)
+	return p.repo.AddAddress(addr)
 }

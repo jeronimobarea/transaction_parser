@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jeronimobarea/transaction_parser/internal/parser"
-	"github.com/jeronimobarea/transaction_parser/internal/pkg/evm"
 )
 
 type FakeParserSvc struct {
@@ -19,11 +18,11 @@ func (f *FakeParserSvc) GetCurrentBlock(_ context.Context) (int64, error) {
 	return f.GetCurrentBlockResp, f.GetCurrentBlockErr
 }
 
-func (f *FakeParserSvc) GetTransactions(_ context.Context, _ evm.Address) ([]parser.Transaction, error) {
+func (f *FakeParserSvc) GetTransactions(_ context.Context, _ string) ([]parser.Transaction, error) {
 	return f.GetTransactionsResp, f.GetTransactionsErr
 }
 
-func (f *FakeParserSvc) Subscribe(_ context.Context, _ evm.Address) error {
+func (f *FakeParserSvc) Subscribe(_ context.Context, _ string) error {
 	return f.SubscribeErr
 }
 

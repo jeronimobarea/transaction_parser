@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/jeronimobarea/transaction_parser/internal/parser"
-	"github.com/jeronimobarea/transaction_parser/internal/pkg/evm"
 	"github.com/jeronimobarea/transaction_parser/internal/test"
 	"github.com/jeronimobarea/transaction_parser/internal/test/evmtest"
 	"github.com/jeronimobarea/transaction_parser/internal/test/parsertest"
@@ -52,7 +51,7 @@ func TestService_GetTransactions(t *testing.T) {
 
 		svc.Register(1, &parsertest.FakeParserSvc{GetTransactionsResp: expected})
 
-		got, err := svc.GetTransactions(context.Background(), evmtest.EVMZeroValueAddress)
+		got, err := svc.GetTransactions(context.Background(), evmtest.EVMZeroValueAddress.String())
 		if err != nil {
 			t.Fatalf("GetTransactions success: unexpected error %v", err)
 		}
@@ -61,20 +60,10 @@ func TestService_GetTransactions(t *testing.T) {
 		}
 	})
 
-	t.Run("invalid address", func(t *testing.T) {
-		svc := parser.NewService(logger)
-
-		invalid := evm.Address("invalid")
-		_, err := svc.GetTransactions(context.Background(), invalid)
-		if err == nil {
-			t.Fatal("GetTransactions invalid address: expected validation error, got none")
-		}
-	})
-
 	t.Run("no parser", func(t *testing.T) {
 		svc := parser.NewService(logger)
 
-		_, err := svc.GetTransactions(context.Background(), evmtest.EVMZeroValueAddress)
+		_, err := svc.GetTransactions(context.Background(), evmtest.EVMZeroValueAddress.String())
 		if !errors.Is(err, parser.ErrLoadingParser) {
 			t.Errorf("GetTransactions no parser: expected %v, got %v", parser.ErrLoadingParser, err)
 		}
@@ -87,7 +76,7 @@ func TestService_GetTransactions(t *testing.T) {
 			GetTransactionsErr: test.DummyErr,
 		})
 
-		_, err := svc.GetTransactions(context.Background(), evmtest.EVMZeroValueAddress)
+		_, err := svc.GetTransactions(context.Background(), evmtest.EVMZeroValueAddress.String())
 		if !errors.Is(err, test.DummyErr) {
 			t.Errorf("GetTransactions not subscribed: expected %v, got %v", test.DummyErr, err)
 		}
@@ -103,16 +92,9 @@ func TestService_Subscribe(t *testing.T) {
 	svc.Register(1, &parsertest.FakeParserSvc{})
 
 	t.Run("happy path", func(t *testing.T) {
-		err := svc.Subscribe(context.Background(), evmtest.EVMZeroValueAddress)
+		err := svc.Subscribe(context.Background(), evmtest.EVMZeroValueAddress.String())
 		if err != nil {
 			t.Fatalf("Subscribe success: expected err=nil; got err=%v", err)
-		}
-	})
-
-	t.Run("invalid address", func(t *testing.T) {
-		err := svc.Subscribe(context.Background(), evm.Address("invalid"))
-		if err == nil {
-			t.Errorf("Subscribe invalid address: expected failure, got err=%v", err)
 		}
 	})
 
@@ -120,7 +102,7 @@ func TestService_Subscribe(t *testing.T) {
 		svc := parser.NewService(logger)
 		svc.Register(1, &parsertest.FakeParserSvc{SubscribeErr: test.DummyErr})
 
-		err := svc.Subscribe(context.Background(), evmtest.EVMZeroValueAddress)
+		err := svc.Subscribe(context.Background(), evmtest.EVMZeroValueAddress.String())
 		if err == nil {
 			t.Errorf("Subscribe repo error: expected failure, got err=%v", err)
 		}
