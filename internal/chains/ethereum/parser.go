@@ -34,12 +34,11 @@ func (p *ethereumParser) GetCurrentBlock(_ context.Context) (int64, error) {
 }
 
 func hexToDecimal(hexValue string) (int64, error) {
-	if len(hexValue) >= 2 && hexValue[0:2] == "0x" {
-		hexValue = hexValue[2:]
-	} else {
+	if len(hexValue) < 2 || hexValue[0:2] != "0x" {
 		return -1, fmt.Errorf("unexpected result format: %s", hexValue)
 	}
 
+	hexValue = hexValue[2:]
 	value, err := strconv.ParseInt(hexValue, 16, 64)
 	if err != nil {
 		return -1, fmt.Errorf("failed to parse hex %q: %v", hexValue, err)
