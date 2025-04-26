@@ -36,6 +36,12 @@ func (h Handler) HandleError(w http.ResponseWriter, err error) {
 		return
 	}
 
+	if errors.Is(err, svcerrors.ErrBadRequest) {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(err.Error()))
 }

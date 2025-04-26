@@ -1,13 +1,14 @@
 package evm
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
+
+	"github.com/jeronimobarea/transaction_parser/internal/pkg/svcerrors"
 )
 
 var (
-	ErrInvalidAddress = errors.New("error validating address")
+	ErrInvalidAddress = fmt.Errorf("%w: error validating address", svcerrors.ErrBadRequest)
 
 	evmAddressRegex = regexp.MustCompile(`^0x[0-9a-fA-F]{40}$`)
 )
