@@ -8,18 +8,18 @@ import (
 
 type runner struct {
 	logger   *log.Logger
-	poolRate time.Duration
+	pollRate time.Duration
 }
 
-func NewRunner(logger *log.Logger, poolRate time.Duration) *runner {
+func NewRunner(logger *log.Logger, pollRate time.Duration) *runner {
 	return &runner{
 		logger:   logger,
-		poolRate: poolRate,
+		pollRate: pollRate,
 	}
 }
 
 func (r *runner) Run(ctx context.Context, p Poller) error {
-	ticker := time.NewTicker(r.poolRate)
+	ticker := time.NewTicker(r.pollRate)
 
 	for {
 		select {
